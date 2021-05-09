@@ -28,3 +28,4 @@ Mean Squared Distance and Diffusion Coefficient Calculation Script for LAMMPS Mo
     ```console
     $ python msd-diffusion.py 500w_25h202_5pnp_sci_npt_100ps2.data 500w_25h202_5pnp_sci_npt_100ps2.dump 1 149 150 1649 5.50 --show_graph
     ```
+    `--show_graph` is optional and shows the MSD vs timesteps graph for quick reference.
