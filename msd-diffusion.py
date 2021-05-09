@@ -2,6 +2,7 @@
 
 import numpy as np
 from argparse import ArgumentParser
+from csv import DictWriter
 from os import fstat
 from sklearn.linear_model import LinearRegression
 from tqdm import tqdm, trange
@@ -145,7 +146,17 @@ with open(dump_file, newline = '') as dumpfile, tqdm(total = fstat(dumpfile.file
 		
 		pbar.update(dumpfile.tell() - pbar.n)
 
-msds = np.array(msds).reshape(-1, 1)
+for t_index in range(len(time_deltas) - 1, -1, -1):
+	time_deltas[t_index] -= time_deltas[0]
+
+with open('out.csv', 'w', newline = '') as csvfile:
+	fieldnames = ['Layer index', 'Timestep', 'Mean MSD']
+	writer = DictWriter(csvfile, fieldnames = fieldnames)
+	writer.writeheader()
+	for l_index in range(len(mean_msds)):
+		for t_index in range(len(time_deltas)):
+			writer.writerow({'Layer index' : l_index + 1, 'Timestep' : time_deltas[t_index], 'Mean MSD' : mean_msds[l_index][t_index]})
+
 time_deltas = np.array(time_deltas).reshape(-1, 1)
 
 if show_graph:
@@ -156,8 +167,6 @@ if show_graph:
 	plt.ylabel('Mean Squared Distance (MSD)')
 	plt.legend()
 	plt.show()
-
-time_deltas = np.array(time_deltas).reshape(-1, 1)
 
 print('Calculated diffusion coefficients:')
 for l_index in range(num_layer_indices):
