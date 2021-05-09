@@ -136,15 +136,22 @@ with open(dump_file, newline = '') as dumpfile, tqdm(total = fstat(dumpfile.file
 				layer_indices[adsorbate_mol_id] = layer_index(squared_distance(adsorbent_avg_coords.coords, adsorbate_avg_coords.coords), layer_size)
 			num_layer_indices = max(layer_indices.values()) + 1
 			mean_msds = [[] for _ in range(num_layer_indices)]
+			num_mols_in_layer = [0] * num_layer_indices
+			for adsorbate_mol_id, _ in adsorbate_mols_avg_coords.items():
+				num_mols_in_layer[layer_indices[adsorbate_mol_id]] += 1
 		
 		msds = [0] * num_layer_indices
 		for adsorbate_mol_id, adsorbate_avg_coords in adsorbate_mols_avg_coords.items():
 			msds[layer_indices[adsorbate_mol_id]] += squared_distance(initial_adsorbate_mols_avg_coords[adsorbate_mol_id].coords, adsorbate_avg_coords.coords)
 		for l_index in range(len(msds)):
-			msds[l_index] /= len(adsorbate_mols_avg_coords.items())
 			mean_msds[l_index].append(msds[l_index])
 		
 		pbar.update(dumpfile.tell() - pbar.n)
+
+for l_index in range(num_layer_indices):
+	if num_mols_in_layer[l_index] != 0:
+		for t_index in range(len(mean_msds[l_index])):
+			mean_msds[l_index][t_index] /= num_mols_in_layer[l_index]
 
 for t_index in range(len(time_deltas) - 1, -1, -1):
 	time_deltas[t_index] -= time_deltas[0]
@@ -162,7 +169,7 @@ time_deltas = np.array(time_deltas).reshape(-1, 1)
 if show_graph:
 	import matplotlib.pyplot as plt
 	for l_index in range(len(mean_msds)):
-		plt.plot(time_deltas, mean_msds[l_index], label = f'Layer {l_index + 1}')
+		plt.plot(time_deltas, mean_msds[l_index], label = f'Layer {l_index + 1} (Num. molecules = {num_mols_in_layer[l_index]})')
 	plt.xlabel('Timesteps')
 	plt.ylabel('Mean Squared Distance (MSD)')
 	plt.legend()
