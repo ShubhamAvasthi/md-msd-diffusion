@@ -22,10 +22,11 @@ Mean Squared Distance and Diffusion Coefficient Calculation Script for LAMMPS Mo
     ```
 1. To run the script:
     ```console
-    $ python msd-diffusion.py "path_to_data_file" "path_to_dump_file" adsorbent_atom_id_start adsorbent_atom_id_end adsorbate_atom_id_start adsorbate_atom_id_end layer_size --show_graph
+    $ python msd-diffusion.py "path_to_data_file" "path_to_dump_file" adsorbent_atom_id_start adsorbent_atom_id_end adsorbate_atom_id_start adsorbate_atom_id_end layer_size -max_num_timesteps=some_number --show_graph
     ```
     For example,
     ```console
-    $ python msd-diffusion.py 500w_25h202_5pnp_sci_npt_100ps2.data 500w_25h202_5pnp_sci_npt_100ps2.dump 1 149 150 1649 5.50 --show_graph
+    $ python msd-diffusion.py 500w_25h202_5pnp_sci_npt_100ps2.data 500w_25h202_5pnp_sci_npt_100ps2.dump 1 149 150 1649 5.50 -max_num_timesteps=1000 --show_graph
     ```
+    `--max_num_timesteps` is optional and limits the number of timesteps being processed.
     `--show_graph` is optional and shows the MSD vs timesteps graph for quick reference.
